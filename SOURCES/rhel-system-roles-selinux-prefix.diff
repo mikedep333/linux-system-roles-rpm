@@ -1,0 +1,23 @@
+diff --git a/README.md b/README.md
+index 80bcf89..cf8cb1b 100644
+--- a/README.md
++++ b/README.md
+@@ -42,7 +42,7 @@ This role can be configured using variables as it is described bellow.
+ vars:
+   [ see bellow ]
+ roles:
+-  - role: selinux
++  - role: linux-system-roles.selinux
+     become: true
+ ```
+ 
+diff --git a/selinux-playbook.yml b/selinux-playbook.yml
+index 28e072c..a5dad27 100644
+--- a/selinux-playbook.yml
++++ b/selinux-playbook.yml
+@@ -31,4 +31,4 @@
+         name: sar-user
+ 
+   roles:
+-    - selinux
++    - linux-system-roles.selinux

@@ -1,0 +1,104 @@
+diff --git a/defaults/main.yml b/defaults/main.yml
+index 15a741d..270408c 100644
+--- a/defaults/main.yml
++++ b/defaults/main.yml
+@@ -3,3 +3,6 @@ dump_target: null
+ path: /var/crash
+ core_collector: null
+ system_action: reboot
++ssh_dump_user: null
++ssh_dump_server: null
++sshkey: /root/.ssh/kdump_id_rsa
+diff --git a/tasks/main.yml b/tasks/main.yml
+index 2c95ced..427f83f 100644
+--- a/tasks/main.yml
++++ b/tasks/main.yml
+@@ -8,6 +8,11 @@
+   command: cat /sys/kernel/kexec_crash_size
+   register: kexec_crash_size
+ 
++- include_tasks: ssh.yml
++  when:
++    - dump_target
++    - dump_target.kind == "ssh"
++
+ - name: Generate /etc/kdump.conf
+   template:
+     src: kdump.conf.j2
+diff --git a/tasks/ssh.yml b/tasks/ssh.yml
+new file mode 100644
+index 0000000..2df84a8
+--- /dev/null
++++ b/tasks/ssh.yml
+@@ -0,0 +1,17 @@
++---
++- stat: path="{{ sshkey }}"
++  register: sshkey_stats
++
++- command: "/usr/bin/ssh-keygen -t rsa -f {{ sshkey }} -N '' "
++  when: sshkey_stats.stat.exists == False
++
++- name: cat file to register
++  shell: cat {{ sshkey }}.pub
++  register: keydata
++
++- name:
++  authorized_key:
++    user: "{{ ssh_dump_user }}"
++    key: "{{ keydata.stdout }}"
++    state: present
++  delegate_to: "{{ ssh_dump_server }}"
+diff --git a/templates/kdump.conf.j2 b/templates/kdump.conf.j2
+index 260e842..1b48ba3 100644
+--- a/templates/kdump.conf.j2
++++ b/templates/kdump.conf.j2
+@@ -4,6 +4,11 @@
+ {% if dump_target %}
+ {{ dump_target.kind }} {{ dump_target.location }}
+ {% endif %}
++
++{% if dump_target and dump_target.kind == "ssh" and sshkey != '/root/.ssh/kdump_id_rsa' %}
++sshkey {{ sshkey }}
++{% endif %}
++
+ path {{ path }}
+ {% if core_collector %}
+ core_collector {{ core_collector }}
+diff --git a/test/test_ssh.yml b/test/test_ssh.yml
+new file mode 100644
+index 0000000..af8b51e
+--- /dev/null
++++ b/test/test_ssh.yml
+@@ -0,0 +1,32 @@
++
++- name: Ensure that the rule runs with ssh
++  hosts: all
++  vars:
++    # this is the outside address under which the ssh dump server is
++    # known and ansible is supposed to be configured to be able to
++    # connect to it (via inventory).
++    ssh_dump_server_outside: localhost
++
++  tasks:
++    - name: gather facts from {{ ssh_dump_server_outside }}
++      setup:
++      delegate_to: "{{ ssh_dump_server_outside }}"
++      delegate_facts: True
++
++    - include_role:
++        name: kdump
++      vars:
++        ssh_dump_user: "{{ hostvars[ssh_dump_server_outside]['ansible_user_id'] }}"
++        # This is the outside address. Ansible will connect to it to
++        # copy the ssh key.
++        ssh_dump_server: "{{ ssh_dump_server_outside }}"
++        path: /tmp/test
++        dump_target:
++          kind: ssh
++          # This is the ssh dump server address visible from inside
++          # the machine being configured. Dumps are to be copied
++          # there. We make here the assumption that this machine is
++          # being run as a VM and the dump server is the VM host
++          # (i.e. for ansible this is localhost). From the VM its
++          # address is then identical to the default route.
++          location: "{{ ssh_dump_user }}@{{ ansible_default_ipv4.gateway }}"
