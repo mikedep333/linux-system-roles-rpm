@@ -1,7 +1,7 @@
 Name: rhel-system-roles
 Summary: Set of interfaces for unified system management
-Version: 0.5
-Release: 3%{?dist}
+Version: 0.6
+Release: 1%{?dist}
 
 #Group: Development/Libraries
 License: GPLv3+ and MIT and BSD
@@ -31,14 +31,14 @@ License: GPLv3+ and MIT and BSD
 %global commit5 b856c7481bf5274d419f71fb62029ea0044b3ec1
 %global shortcommit5 %(c=%{commit5}; echo ${c:0:7})
 %global rolename5 network
-#%%global version5 0.2
+%global version5 0.4
 
 
 Source: https://github.com/linux-system-roles/%{rolename0}/archive/%{version0}.tar.gz#/%{rolename0}-%{version0}.tar.gz
 Source1: https://github.com/linux-system-roles/%{rolename1}/archive/%{version1}.tar.gz#/%{rolename1}-%{version1}.tar.gz
 Source2: https://github.com/linux-system-roles/%{rolename2}/archive/%{commit2}.tar.gz#/%{rolename2}-%{shortcommit2}.tar.gz
 Source3: https://github.com/linux-system-roles/%{rolename3}/archive/%{version3}.tar.gz#/%{rolename3}-%{version3}.tar.gz
-Source5:  https://github.com/linux-system-roles/%{rolename5}/archive/%{commit5}.tar.gz#/%{rolename5}-%{shortcommit5}.tar.gz
+Source5:  https://github.com/linux-system-roles/%{rolename5}/archive/%{version5}.tar.gz#/%{rolename5}-%{version5}.tar.gz
 
 Source6: timesync-playbook.yml
 Source7: timesync-pool-playbook.yml
@@ -52,8 +52,6 @@ Patch101: rhel-system-roles-kdump-ssh.diff
 
 Url: https://github.com/linux-system-roles/
 BuildArch: noarch
-
-Requires: ansible
 
 %description
 Collection of interfaces serving as a stable API for the management
@@ -75,7 +73,7 @@ cd ..
 cd %{rolename3}-%{version3}
 %patch3 -p1
 cd ..
-cd %{rolename5}-%{commit5}
+cd %{rolename5}-%{version5}
 %patch5 -p1
 cd ..
 
@@ -88,7 +86,7 @@ cp -pR %{rolename0}-%{version0}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{
 cp -pR %{rolename1}-%{version1}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename1}
 cp -pR %{rolename2}-%{commit2}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename2}
 cp -pR %{rolename3}-%{version3}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename3}
-cp -pR %{rolename5}-%{commit5}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename5}
+cp -pR %{rolename5}-%{version5}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename5}
 
 ln -s    %{rolecompatprefix}%{rolename0}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename0}
 ln -s    %{rolecompatprefix}%{rolename1}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename1}
@@ -145,6 +143,8 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/exampl
 rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples
 
 %files
+%dir %{_datadir}/ansible
+%dir %{_datadir}/ansible/roles
 %{_datadir}/ansible/roles/%{roleprefix}kdump
 %{_datadir}/ansible/roles/%{roleprefix}postfix
 %{_datadir}/ansible/roles/%{roleprefix}selinux
@@ -173,6 +173,10 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/exampl
 %license %{_datadir}/ansible/roles/%{rolecompatprefix}network/COPYING
 
 %changelog
+* Tue Jan 30 2018 Pavel Cahyna <pcahyna@redhat.com> - 0.6-1
+- Drop hard dependency on ansible (#1525655), patch from Yaakov Selkowitz
+- Update the network role to version 0.4, solves bz#1487747, bz#1478576
+
 * Tue Dec 19 2017 Pavel Cahyna <pcahyna@redhat.com> - 0.5-3
 - kdump: fix the wrong conditional for ssh checking and improve test (PR#10)
 
