@@ -1,7 +1,7 @@
 Name: rhel-system-roles
 Summary: Set of interfaces for unified system management
 Version: 0.6
-Release: 1%{?dist}
+Release: 3%{?dist}
 
 #Group: Development/Libraries
 License: GPLv3+ and MIT and BSD
@@ -49,6 +49,7 @@ Patch3: rhel-system-roles-%{rolename3}-prefix.diff
 Patch5: rhel-system-roles-%{rolename5}-prefix.diff
 
 Patch101: rhel-system-roles-kdump-ssh.diff
+Patch51: network-docs-pr36.diff
 
 Url: https://github.com/linux-system-roles/
 BuildArch: noarch
@@ -75,6 +76,7 @@ cd %{rolename3}-%{version3}
 cd ..
 cd %{rolename5}-%{version5}
 %patch5 -p1
+%patch51 -p1
 cd ..
 
 %build
@@ -173,6 +175,13 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/exampl
 %license %{_datadir}/ansible/roles/%{rolecompatprefix}network/COPYING
 
 %changelog
+* Wed Mar 14 2018 Pavel Cahyna <pcahyna@redhat.com> - 0.6-3
+- Minor corrections of the previous change by Till Maas.
+
+* Fri Mar  9 2018 Pavel Cahyna <pcahyna@redhat.com> - 0.6-2
+- Document network role options: static routes, ethernet, dns
+  Upstream PR#36, bz1550128, documents bz1487747 and bz1478576
+
 * Tue Jan 30 2018 Pavel Cahyna <pcahyna@redhat.com> - 0.6-1
 - Drop hard dependency on ansible (#1525655), patch from Yaakov Selkowitz
 - Update the network role to version 0.4, solves bz#1487747, bz#1478576
