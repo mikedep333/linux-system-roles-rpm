@@ -1,29 +1,29 @@
 diff --git a/README.md b/README.md
-index f419e0b..0d2112d 100644
+index 122b725..3866c2e 100644
 --- a/README.md
 +++ b/README.md
-@@ -64,7 +64,7 @@ Install and configure ntp to synchronize the system clock with three NTP servers
+@@ -70,7 +70,7 @@ Install and configure ntp to synchronize the system clock with three NTP servers
        - hostname: baz.example.com
          iburst: yes
    roles:
 -    - timesync
-+    - linux-system-roles.timesync
++    - rhel-system-roles.timesync
  ```
  
  Install and configure linuxptp to synchronize the system clock with a
-@@ -77,7 +77,7 @@ grandmaster in PTP domain number 0, which is accessible on interface eth0:
+@@ -83,7 +83,7 @@ grandmaster in PTP domain number 0, which is accessible on interface eth0:
        - number: 0
          interfaces: [ eth0 ]
    roles:
 -    - timesync
-+    - linux-system-roles.timesync
++    - rhel-system-roles.timesync
  ```
  
  Install and configure chrony and linuxptp to synchronize the system clock with
-@@ -104,5 +104,5 @@ synchronization:
+@@ -110,5 +110,5 @@ synchronization:
          transport: UDPv4
          delay: 0.000010
    roles:
 -    - timesync
-+    - linux-system-roles.timesync
++    - rhel-system-roles.timesync
  ```

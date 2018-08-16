@@ -1,50 +1,60 @@
 diff --git a/examples/bond-with-vlan.yml b/examples/bond-with-vlan.yml
-index d120f13..4023c8d 100644
+index 2e6be23..3b7a6dc 100644
 --- a/examples/bond-with-vlan.yml
 +++ b/examples/bond-with-vlan.yml
-@@ -34,4 +34,4 @@
+@@ -35,4 +35,4 @@
              - "192.0.2.{{ network_iphost }}/24"
  
    roles:
--    - network
-+    - linux-system-roles.network
+-    - linux-system-roles.network
++    - rhel-system-roles.network
 diff --git a/examples/bridge-with-vlan.yml b/examples/bridge-with-vlan.yml
-index ce48443..63c935b 100644
+index 037ff8e..83c586d 100644
 --- a/examples/bridge-with-vlan.yml
 +++ b/examples/bridge-with-vlan.yml
-@@ -32,4 +32,4 @@
+@@ -33,4 +33,4 @@
              - "192.0.2.{{ network_iphost }}/24"
  
    roles:
--    - network
-+    - linux-system-roles.network
+-    - linux-system-roles.network
++    - rhel-system-roles.network
 diff --git a/examples/eth-simple-auto.yml b/examples/eth-simple-auto.yml
-index 5934ca8..8fa0147 100644
+index 0ba168a..e4c4a54 100644
 --- a/examples/eth-simple-auto.yml
 +++ b/examples/eth-simple-auto.yml
-@@ -14,4 +14,4 @@
+@@ -15,4 +15,4 @@
          mtu: 1450
  
    roles:
--    - network
-+    - linux-system-roles.network
+-    - linux-system-roles.network
++    - rhel-system-roles.network
 diff --git a/examples/eth-with-vlan.yml b/examples/eth-with-vlan.yml
-index d269886..fb9b2d9 100644
+index 63c7432..1c8ee60 100644
 --- a/examples/eth-with-vlan.yml
 +++ b/examples/eth-with-vlan.yml
-@@ -24,4 +24,4 @@
+@@ -25,4 +25,4 @@
              - "192.0.2.{{ network_iphost }}/24"
  
    roles:
--    - network
-+    - linux-system-roles.network
+-    - linux-system-roles.network
++    - rhel-system-roles.network
 diff --git a/examples/infiniband.yml b/examples/infiniband.yml
-index ca1db67..1054e70 100644
+index e7197fe..b8710d4 100644
 --- a/examples/infiniband.yml
 +++ b/examples/infiniband.yml
-@@ -21,4 +21,4 @@
+@@ -22,4 +22,4 @@
              - 198.51.100.133/30
  
    roles:
--    - network
-+    - linux-system-roles.network
+-    - linux-system-roles.network
++    - rhel-system-roles.network
+diff --git a/examples/macvlan.yml b/examples/macvlan.yml
+index 0e6ba1b..14f5dd8 100644
+--- a/examples/macvlan.yml
++++ b/examples/macvlan.yml
+@@ -24,4 +24,4 @@
+             - 192.168.1.1/24
+ 
+   roles:
+-    - linux-system-roles.network
++    - rhel-system-roles.network

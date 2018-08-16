@@ -1,7 +1,7 @@
 Name: rhel-system-roles
 Summary: Set of interfaces for unified system management
-Version: 0.6
-Release: 3%{?dist}
+Version: 1.0
+Release: 2%{?dist}
 
 #Group: Development/Libraries
 License: GPLv3+ and MIT and BSD
@@ -11,14 +11,14 @@ License: GPLv3+ and MIT and BSD
 %global commit0 fe8bb81966b60fa8979f3816a12b0c7120d71140
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global rolename0 kdump
-%global version0 0.1
+%global version0 1.0.0-rc.1
 
 %global commit1 43eec5668425d295dce3801216c19b1916df1f9b
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global rolename1 postfix
 %global version1 0.1
 
-%global commit2 ebcb133649fb5aba5bf0b7a64f2db2b90aadda1b
+%global commit2 6dd057aa434a31cb6ee67d02967362f9131e0c50
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 %global rolename2 selinux
 #%%global version2 0.1
@@ -26,19 +26,19 @@ License: GPLv3+ and MIT and BSD
 %global commit3 33a1a8c349de10d6281ed83d4c791e9177d7a141
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 %global rolename3 timesync
-%global version3 0.1
+%global version3 1.0.0-rc.1
 
-%global commit5 b856c7481bf5274d419f71fb62029ea0044b3ec1
+%global commit5 d866422d9d73ed823632a3c56ee8575cd56cad5b
 %global shortcommit5 %(c=%{commit5}; echo ${c:0:7})
 %global rolename5 network
-%global version5 0.4
+#%%global version5 0.4
 
 
 Source: https://github.com/linux-system-roles/%{rolename0}/archive/%{version0}.tar.gz#/%{rolename0}-%{version0}.tar.gz
 Source1: https://github.com/linux-system-roles/%{rolename1}/archive/%{version1}.tar.gz#/%{rolename1}-%{version1}.tar.gz
 Source2: https://github.com/linux-system-roles/%{rolename2}/archive/%{commit2}.tar.gz#/%{rolename2}-%{shortcommit2}.tar.gz
 Source3: https://github.com/linux-system-roles/%{rolename3}/archive/%{version3}.tar.gz#/%{rolename3}-%{version3}.tar.gz
-Source5:  https://github.com/linux-system-roles/%{rolename5}/archive/%{version5}.tar.gz#/%{rolename5}-%{version5}.tar.gz
+Source5: https://github.com/linux-system-roles/%{rolename5}/archive/%{commit5}.tar.gz#/%{rolename5}-%{shortcommit5}.tar.gz
 
 Source6: timesync-playbook.yml
 Source7: timesync-pool-playbook.yml
@@ -48,22 +48,32 @@ Patch2: rhel-system-roles-%{rolename2}-prefix.diff
 Patch3: rhel-system-roles-%{rolename3}-prefix.diff
 Patch5: rhel-system-roles-%{rolename5}-prefix.diff
 
-Patch101: rhel-system-roles-kdump-ssh.diff
-Patch51: network-docs-pr36.diff
-
 Url: https://github.com/linux-system-roles/
 BuildArch: noarch
 
 %description
-Collection of interfaces serving as a stable API for the management
-of the RHEL operating system across major releases, implemented
-using Ansible.
+Collection of Ansible roles and modules that provide a stable and
+consistent configuration interface for managing multiple versions
+of Red Hat Enterprise Linux.
+
+%package techpreview
+Summary: Set of interfaces for unified system management (tech preview)
+# to be updated when roles move to/from the main package to this one
+Conflicts: rhel-system-roles < 1.0-1
+
+%description techpreview
+Collection of Ansible roles and modules that provide a consistent
+configuration interface for managing multiple versions of Red Hat
+Enterprise Linux.
+
+The roles in this subpackage are available as Technology Preview
+and their backward compatibility is not guaranteed.
 
 
 %prep
-%setup -qc -b1 -b2 -b3 -b5
+%setup -qc -a1 -a2 -a3 -a5
 cd %{rolename0}-%{version0}
-%patch101 -p1
+#kdump patches here if necessary
 cd ..
 cd %{rolename1}-%{version1}
 %patch1 -p1
@@ -74,9 +84,8 @@ cd ..
 cd %{rolename3}-%{version3}
 %patch3 -p1
 cd ..
-cd %{rolename5}-%{version5}
+cd %{rolename5}-%{commit5}
 %patch5 -p1
-%patch51 -p1
 cd ..
 
 %build
@@ -88,7 +97,7 @@ cp -pR %{rolename0}-%{version0}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{
 cp -pR %{rolename1}-%{version1}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename1}
 cp -pR %{rolename2}-%{commit2}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename2}
 cp -pR %{rolename3}-%{version3}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename3}
-cp -pR %{rolename5}-%{version5}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename5}
+cp -pR %{rolename5}-%{commit5}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename5}
 
 ln -s    %{rolecompatprefix}%{rolename0}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename0}
 ln -s    %{rolecompatprefix}%{rolename1}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename1}
@@ -123,7 +132,7 @@ cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}timesync/READM
     $RPM_BUILD_ROOT%{_pkgdocdir}/timesync
 
 cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/README.md \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/COPYING \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/LICENSE \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network
 mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/bond-with-vlan.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-bond-with-vlan-playbook.yml
@@ -135,46 +144,84 @@ mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-eth-with-vlan-playbook.yml
 mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/infiniband.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-infiniband-playbook.yml
+mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/macvlan.yml \
+    $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-macvlan-playbook.yml
+cp $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/remove-profile.yml \
+    $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-remove-profile-playbook.yml
+rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/remove-profile.yml
+cp $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/down-profile.yml \
+    $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-down-profile-playbook.yml
+rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/down-profile.yml
 mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/inventory \
    $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-inventory
 
 rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/.gitignore
-rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/test/.gitignore
-rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/roles/network
-rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/roles
+rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/tests/.gitignore
+rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/roles
 rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples
 
 %files
 %dir %{_datadir}/ansible
 %dir %{_datadir}/ansible/roles
 %{_datadir}/ansible/roles/%{roleprefix}kdump
-%{_datadir}/ansible/roles/%{roleprefix}postfix
 %{_datadir}/ansible/roles/%{roleprefix}selinux
 %{_datadir}/ansible/roles/%{roleprefix}timesync
 %{_datadir}/ansible/roles/%{roleprefix}network
 %{_datadir}/ansible/roles/%{rolecompatprefix}kdump
-%{_datadir}/ansible/roles/%{rolecompatprefix}postfix
 %{_datadir}/ansible/roles/%{rolecompatprefix}selinux
 %{_datadir}/ansible/roles/%{rolecompatprefix}timesync
 %{_datadir}/ansible/roles/%{rolecompatprefix}network
-%doc %{_pkgdocdir}/*/example-*-playbook.yml
+# no examples for kdump yet
+#%%doc %%{_pkgdocdir}/kdump/example-*-playbook.yml
+%doc %{_pkgdocdir}/selinux/example-*-playbook.yml
+%doc %{_pkgdocdir}/timesync/example-*-playbook.yml
+%doc %{_pkgdocdir}/network/example-*-playbook.yml
+
 %doc %{_pkgdocdir}/network/example-inventory
-%doc %{_pkgdocdir}/*/README.md
+%doc %{_pkgdocdir}/kdump/README.md
+%doc %{_pkgdocdir}/selinux/README.md
+%doc %{_pkgdocdir}/timesync/README.md
+%doc %{_pkgdocdir}/network/README.md
 %doc %{_datadir}/ansible/roles/%{rolecompatprefix}kdump/README.md
-%doc %{_datadir}/ansible/roles/%{rolecompatprefix}postfix/README.md
 %doc %{_datadir}/ansible/roles/%{rolecompatprefix}selinux/README.md
 %doc %{_datadir}/ansible/roles/%{rolecompatprefix}timesync/README.md
 %doc %{_datadir}/ansible/roles/%{rolecompatprefix}network/README.md
 
 
 %license %{_pkgdocdir}/*/COPYING
+%license %{_pkgdocdir}/*/LICENSE
 %license %{_datadir}/ansible/roles/%{rolecompatprefix}kdump/COPYING
-%license %{_datadir}/ansible/roles/%{rolecompatprefix}postfix/COPYING
 %license %{_datadir}/ansible/roles/%{rolecompatprefix}selinux/COPYING
 %license %{_datadir}/ansible/roles/%{rolecompatprefix}timesync/COPYING
-%license %{_datadir}/ansible/roles/%{rolecompatprefix}network/COPYING
+%license %{_datadir}/ansible/roles/%{rolecompatprefix}network/LICENSE
+
+%files techpreview
+%dir %{_datadir}/ansible
+%dir %{_datadir}/ansible/roles
+
+%{_datadir}/ansible/roles/%{roleprefix}postfix
+%{_datadir}/ansible/roles/%{rolecompatprefix}postfix
+# no examples for postfix yet
+#%%doc %%{_pkgdocdir}/postfix/example-*-playbook.yml
+
+%doc %{_pkgdocdir}/postfix/README.md
+%doc %{_datadir}/ansible/roles/%{rolecompatprefix}postfix/README.md
+%license %{_datadir}/ansible/roles/%{rolecompatprefix}postfix/COPYING
 
 %changelog
+* Thu Aug  2 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-2
+- Rebase the network role to the last revision (d866422).
+  Many improvements to tests, introduces autodetection of the current provider
+  and defaults to using profile name as interface name.
+- Update the description.
+
+* Wed Aug  1 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-1
+- Rebase the selinux, timesync and kdump roles to their 1.0rc1 versions.
+  Many changes to the role interfaces to make them more consistent
+  and conforming to Ansible best practices.
+- Split the postfix role into a -techpreview subpackage, we do not consider
+  it stable yet.
+
 * Wed Mar 14 2018 Pavel Cahyna <pcahyna@redhat.com> - 0.6-3
 - Minor corrections of the previous change by Till Maas.
 

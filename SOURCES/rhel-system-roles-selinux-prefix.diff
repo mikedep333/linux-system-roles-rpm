@@ -1,23 +1,32 @@
 diff --git a/README.md b/README.md
-index 80bcf89..cf8cb1b 100644
+index a0385b0..6efc62d 100644
 --- a/README.md
 +++ b/README.md
-@@ -42,7 +42,7 @@ This role can be configured using variables as it is described bellow.
+@@ -41,7 +41,7 @@ This role can be configured using variables as it is described below.
  vars:
-   [ see bellow ]
+   [ see below ]
  roles:
--  - role: selinux
-+  - role: linux-system-roles.selinux
+-  - role: linux-system-roles.selinux
++  - role: rhel-system-roles.selinux
      become: true
  ```
  
 diff --git a/selinux-playbook.yml b/selinux-playbook.yml
-index 28e072c..a5dad27 100644
+index 78d3953..b2348d5 100644
 --- a/selinux-playbook.yml
 +++ b/selinux-playbook.yml
-@@ -31,4 +31,4 @@
-         name: sar-user
+@@ -31,7 +31,7 @@
+     - name: execute the role and catch errors
+       block:
+         - include_role:
+-            name: linux-system-roles.selinux
++            name: rhel-system-roles.selinux
+       rescue:
+         # Fail if failed for a different reason than selinux_reboot_required.
+         - name: handle errors
+@@ -52,4 +52,4 @@
  
-   roles:
--    - selinux
-+    - linux-system-roles.selinux
+         - name: reapply the role
+           include_role:
+-            name: linux-system-roles.selinux
++            name: rhel-system-roles.selinux

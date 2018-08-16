@@ -1,5 +1,5 @@
-SOURCES/kdump-0.1.tar.gz
-SOURCES/network-0.4.tar.gz
+SOURCES/kdump-1.0.0-rc.1.tar.gz
+SOURCES/network-d866422.tar.gz
 SOURCES/postfix-0.1.tar.gz
-SOURCES/selinux-ebcb133.tar.gz
-SOURCES/timesync-0.1.tar.gz
+SOURCES/selinux-6dd057a.tar.gz
+SOURCES/timesync-1.0.0-rc.1.tar.gz
