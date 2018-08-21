@@ -1,7 +1,7 @@
 Name: rhel-system-roles
 Summary: Set of interfaces for unified system management
 Version: 1.0
-Release: 2%{?dist}
+Release: 4%{?dist}
 
 #Group: Development/Libraries
 License: GPLv3+ and MIT and BSD
@@ -48,44 +48,49 @@ Patch2: rhel-system-roles-%{rolename2}-prefix.diff
 Patch3: rhel-system-roles-%{rolename3}-prefix.diff
 Patch5: rhel-system-roles-%{rolename5}-prefix.diff
 
+Patch101: rhel-system-roles-kdump-pr16.diff
+
+Patch11: rhel-system-roles-postfix-pr5.diff
+
+Patch21: rhel-system-roles-selinux-pr30.diff
+
+Patch31: rhel-system-roles-timesync-pr18.diff
+Patch32: rhel-system-roles-timesync-pr19.diff
+
+Patch51: rhel-system-roles-network-pr77-pr80.diff
+
 Url: https://github.com/linux-system-roles/
 BuildArch: noarch
+
+Obsoletes: rhel-system-roles-techpreview < 1.0-3
 
 %description
 Collection of Ansible roles and modules that provide a stable and
 consistent configuration interface for managing multiple versions
 of Red Hat Enterprise Linux.
 
-%package techpreview
-Summary: Set of interfaces for unified system management (tech preview)
-# to be updated when roles move to/from the main package to this one
-Conflicts: rhel-system-roles < 1.0-1
-
-%description techpreview
-Collection of Ansible roles and modules that provide a consistent
-configuration interface for managing multiple versions of Red Hat
-Enterprise Linux.
-
-The roles in this subpackage are available as Technology Preview
-and their backward compatibility is not guaranteed.
-
 
 %prep
 %setup -qc -a1 -a2 -a3 -a5
 cd %{rolename0}-%{version0}
-#kdump patches here if necessary
+%patch101 -p1
 cd ..
 cd %{rolename1}-%{version1}
 %patch1 -p1
+%patch11 -p1
 cd ..
 cd %{rolename2}-%{commit2}
 %patch2 -p1
+%patch21 -p1
 cd ..
 cd %{rolename3}-%{version3}
 %patch3 -p1
+%patch31 -p1
+%patch32 -p1
 cd ..
 cd %{rolename5}-%{commit5}
 %patch5 -p1
+%patch51 -p1
 cd ..
 
 %build
@@ -164,25 +169,20 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/exampl
 %dir %{_datadir}/ansible
 %dir %{_datadir}/ansible/roles
 %{_datadir}/ansible/roles/%{roleprefix}kdump
+%{_datadir}/ansible/roles/%{roleprefix}postfix
 %{_datadir}/ansible/roles/%{roleprefix}selinux
 %{_datadir}/ansible/roles/%{roleprefix}timesync
 %{_datadir}/ansible/roles/%{roleprefix}network
 %{_datadir}/ansible/roles/%{rolecompatprefix}kdump
+%{_datadir}/ansible/roles/%{rolecompatprefix}postfix
 %{_datadir}/ansible/roles/%{rolecompatprefix}selinux
 %{_datadir}/ansible/roles/%{rolecompatprefix}timesync
 %{_datadir}/ansible/roles/%{rolecompatprefix}network
-# no examples for kdump yet
-#%%doc %%{_pkgdocdir}/kdump/example-*-playbook.yml
-%doc %{_pkgdocdir}/selinux/example-*-playbook.yml
-%doc %{_pkgdocdir}/timesync/example-*-playbook.yml
-%doc %{_pkgdocdir}/network/example-*-playbook.yml
-
+%doc %{_pkgdocdir}/*/example-*-playbook.yml
 %doc %{_pkgdocdir}/network/example-inventory
-%doc %{_pkgdocdir}/kdump/README.md
-%doc %{_pkgdocdir}/selinux/README.md
-%doc %{_pkgdocdir}/timesync/README.md
-%doc %{_pkgdocdir}/network/README.md
+%doc %{_pkgdocdir}/*/README.md
 %doc %{_datadir}/ansible/roles/%{rolecompatprefix}kdump/README.md
+%doc %{_datadir}/ansible/roles/%{rolecompatprefix}postfix/README.md
 %doc %{_datadir}/ansible/roles/%{rolecompatprefix}selinux/README.md
 %doc %{_datadir}/ansible/roles/%{rolecompatprefix}timesync/README.md
 %doc %{_datadir}/ansible/roles/%{rolecompatprefix}network/README.md
@@ -191,24 +191,20 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/exampl
 %license %{_pkgdocdir}/*/COPYING
 %license %{_pkgdocdir}/*/LICENSE
 %license %{_datadir}/ansible/roles/%{rolecompatprefix}kdump/COPYING
+%license %{_datadir}/ansible/roles/%{rolecompatprefix}postfix/COPYING
 %license %{_datadir}/ansible/roles/%{rolecompatprefix}selinux/COPYING
 %license %{_datadir}/ansible/roles/%{rolecompatprefix}timesync/COPYING
 %license %{_datadir}/ansible/roles/%{rolecompatprefix}network/LICENSE
 
-%files techpreview
-%dir %{_datadir}/ansible
-%dir %{_datadir}/ansible/roles
-
-%{_datadir}/ansible/roles/%{roleprefix}postfix
-%{_datadir}/ansible/roles/%{rolecompatprefix}postfix
-# no examples for postfix yet
-#%%doc %%{_pkgdocdir}/postfix/example-*-playbook.yml
-
-%doc %{_pkgdocdir}/postfix/README.md
-%doc %{_datadir}/ansible/roles/%{rolecompatprefix}postfix/README.md
-%license %{_datadir}/ansible/roles/%{rolecompatprefix}postfix/COPYING
-
 %changelog
+* Thu Aug 16 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-4
+- Add Obsoletes for the -techpreview subpackage
+
+* Thu Aug 16 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-3
+- Add warnings to role READMEs and other doc updates, rhbz#1616018
+- network: split the state setting into state and persistent_state, rhbz#1616014
+- Undo the -techpreview subpackage introduced in 1.0-1, rhbz#1616015
+
 * Thu Aug  2 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-2
 - Rebase the network role to the last revision (d866422).
   Many improvements to tests, introduces autodetection of the current provider
