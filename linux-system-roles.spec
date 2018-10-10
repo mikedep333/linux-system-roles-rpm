@@ -1,12 +1,18 @@
+%if 0%{?rhel}
 Name: rhel-system-roles
+%else
+Name: linux-system-roles
+%endif
 Summary: Set of interfaces for unified system management
 Version: 1.0
-Release: 4%{?dist}
+Release: 5%{?dist}
 
 #Group: Development/Libraries
 License: GPLv3+ and MIT and BSD
-%global rolecompatprefix rhel-system-roles.
-%global roleprefix linux-system-roles.
+%if 0%{?rhel}
+%global rolealtprefix linux-system-roles.
+%endif
+%global roleprefix %{name}.
 
 %global commit0 fe8bb81966b60fa8979f3816a12b0c7120d71140
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
@@ -33,7 +39,6 @@ License: GPLv3+ and MIT and BSD
 %global rolename5 network
 #%%global version5 0.4
 
-
 Source: https://github.com/linux-system-roles/%{rolename0}/archive/%{version0}.tar.gz#/%{rolename0}-%{version0}.tar.gz
 Source1: https://github.com/linux-system-roles/%{rolename1}/archive/%{version1}.tar.gz#/%{rolename1}-%{version1}.tar.gz
 Source2: https://github.com/linux-system-roles/%{rolename2}/archive/%{commit2}.tar.gz#/%{rolename2}-%{shortcommit2}.tar.gz
@@ -43,26 +48,23 @@ Source5: https://github.com/linux-system-roles/%{rolename5}/archive/%{commit5}.t
 Source6: timesync-playbook.yml
 Source7: timesync-pool-playbook.yml
 
+Source8: md2html.sh
+
+%if "%{roleprefix}" != "linux-system-roles."
 Patch1: rhel-system-roles-%{rolename1}-prefix.diff
 Patch2: rhel-system-roles-%{rolename2}-prefix.diff
 Patch3: rhel-system-roles-%{rolename3}-prefix.diff
 Patch5: rhel-system-roles-%{rolename5}-prefix.diff
+%endif
 
-Patch101: rhel-system-roles-kdump-pr16.diff
-
-Patch11: rhel-system-roles-postfix-pr5.diff
-
-Patch21: rhel-system-roles-selinux-pr30.diff
-
-Patch31: rhel-system-roles-timesync-pr18.diff
-Patch32: rhel-system-roles-timesync-pr19.diff
-
-Patch51: rhel-system-roles-network-pr77-pr80.diff
+Patch52: network-permissions.diff
 
 Url: https://github.com/linux-system-roles/
 BuildArch: noarch
 
-Obsoletes: rhel-system-roles-techpreview < 1.0-3
+BuildRequires: asciidoc
+BuildRequires: pandoc
+BuildRequires: highlight
 
 %description
 Collection of Ansible roles and modules that provide a stable and
@@ -73,42 +75,54 @@ of Red Hat Enterprise Linux.
 %prep
 %setup -qc -a1 -a2 -a3 -a5
 cd %{rolename0}-%{version0}
-%patch101 -p1
+#kdump patches here if necessary
 cd ..
 cd %{rolename1}-%{version1}
+%if "%{roleprefix}" != "linux-system-roles."
 %patch1 -p1
-%patch11 -p1
+%endif
 cd ..
 cd %{rolename2}-%{commit2}
+%if "%{roleprefix}" != "linux-system-roles."
 %patch2 -p1
-%patch21 -p1
+%endif
 cd ..
 cd %{rolename3}-%{version3}
+%if "%{roleprefix}" != "linux-system-roles."
 %patch3 -p1
-%patch31 -p1
-%patch32 -p1
+%endif
 cd ..
 cd %{rolename5}-%{commit5}
+%if "%{roleprefix}" != "linux-system-roles."
 %patch5 -p1
-%patch51 -p1
+%endif
+%patch52 -p1
 cd ..
 
 %build
+sh %{SOURCE8} \
+%{rolename0}-%{version0}/README.md \
+%{rolename1}-%{version1}/README.md \
+%{rolename2}-%{commit2}/README.md \
+%{rolename3}-%{version3}/README.md \
+%{rolename5}-%{commit5}/README.md
 
 %install
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles
 
-cp -pR %{rolename0}-%{version0}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename0}
-cp -pR %{rolename1}-%{version1}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename1}
-cp -pR %{rolename2}-%{commit2}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename2}
-cp -pR %{rolename3}-%{version3}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename3}
-cp -pR %{rolename5}-%{commit5}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}%{rolename5}
+cp -pR %{rolename0}-%{version0}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename0}
+cp -pR %{rolename1}-%{version1}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename1}
+cp -pR %{rolename2}-%{commit2}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename2}
+cp -pR %{rolename3}-%{version3}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename3}
+cp -pR %{rolename5}-%{commit5}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename5}
 
-ln -s    %{rolecompatprefix}%{rolename0}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename0}
-ln -s    %{rolecompatprefix}%{rolename1}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename1}
-ln -s    %{rolecompatprefix}%{rolename2}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename2}
-ln -s    %{rolecompatprefix}%{rolename3}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename3}
-ln -s    %{rolecompatprefix}%{rolename5}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename5}
+%if 0%{?rolealtprefix:1}
+ln -s    %{roleprefix}%{rolename0}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolealtprefix}%{rolename0}
+ln -s    %{roleprefix}%{rolename1}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolealtprefix}%{rolename1}
+ln -s    %{roleprefix}%{rolename2}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolealtprefix}%{rolename2}
+ln -s    %{roleprefix}%{rolename3}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolealtprefix}%{rolename3}
+ln -s    %{roleprefix}%{rolename5}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolealtprefix}%{rolename5}
+%endif
 
 mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}/kdump
 mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}/postfix
@@ -118,105 +132,117 @@ install -p -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_pkgdocdir}/timesync/example-times
 install -p -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_pkgdocdir}/timesync/example-timesync-pool-playbook.yml
 mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}/network
 
-cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}kdump/README.md \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}kdump/COPYING \
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}kdump/README.md \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}kdump/README.html \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}kdump/COPYING \
     $RPM_BUILD_ROOT%{_pkgdocdir}/kdump
 
-cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}postfix/README.md \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}postfix/COPYING \
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}postfix/README.md \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}postfix/README.html \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}postfix/COPYING \
     $RPM_BUILD_ROOT%{_pkgdocdir}/postfix
 
-cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}selinux/README.md \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}selinux/COPYING \
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}selinux/README.md \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}selinux/README.html \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}selinux/COPYING \
     $RPM_BUILD_ROOT%{_pkgdocdir}/selinux
-mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}selinux/selinux-playbook.yml \
+mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}selinux/selinux-playbook.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/selinux/example-selinux-playbook.yml
 
-cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}timesync/README.md \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}timesync/COPYING \
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}timesync/README.md \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}timesync/README.html \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}timesync/COPYING \
     $RPM_BUILD_ROOT%{_pkgdocdir}/timesync
 
-cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/README.md \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/LICENSE \
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/README.md \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/README.html \
+    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/LICENSE \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network
-mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/bond-with-vlan.yml \
+mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/bond-with-vlan.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-bond-with-vlan-playbook.yml
-mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/bridge-with-vlan.yml \
+mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/bridge-with-vlan.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-bridge-with-vlan-playbook.yml
-mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/eth-simple-auto.yml \
+mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/eth-simple-auto.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-eth-simple-auto-playbook.yml
-mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/eth-with-vlan.yml \
+mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/eth-with-vlan.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-eth-with-vlan-playbook.yml
-mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/infiniband.yml \
+mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/infiniband.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-infiniband-playbook.yml
-mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/macvlan.yml \
+mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/macvlan.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-macvlan-playbook.yml
-cp $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/remove-profile.yml \
+cp $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/remove-profile.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-remove-profile-playbook.yml
-rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/remove-profile.yml
-cp $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/down-profile.yml \
+rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/remove-profile.yml
+cp $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/down-profile.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-down-profile-playbook.yml
-rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/down-profile.yml
-mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/inventory \
+rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/down-profile.yml
+mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/inventory \
    $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-inventory
 
-rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/.gitignore
-rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/tests/.gitignore
-rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples/roles
-rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolecompatprefix}network/examples
+rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/.gitignore
+rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/tests/.gitignore
+rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/roles
+rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 
 %files
 %dir %{_datadir}/ansible
 %dir %{_datadir}/ansible/roles
+%if 0%{?rolealtprefix:1}
+%{_datadir}/ansible/roles/%{rolealtprefix}kdump
+%{_datadir}/ansible/roles/%{rolealtprefix}postfix
+%{_datadir}/ansible/roles/%{rolealtprefix}selinux
+%{_datadir}/ansible/roles/%{rolealtprefix}timesync
+%{_datadir}/ansible/roles/%{rolealtprefix}network
+%endif
 %{_datadir}/ansible/roles/%{roleprefix}kdump
 %{_datadir}/ansible/roles/%{roleprefix}postfix
 %{_datadir}/ansible/roles/%{roleprefix}selinux
 %{_datadir}/ansible/roles/%{roleprefix}timesync
 %{_datadir}/ansible/roles/%{roleprefix}network
-%{_datadir}/ansible/roles/%{rolecompatprefix}kdump
-%{_datadir}/ansible/roles/%{rolecompatprefix}postfix
-%{_datadir}/ansible/roles/%{rolecompatprefix}selinux
-%{_datadir}/ansible/roles/%{rolecompatprefix}timesync
-%{_datadir}/ansible/roles/%{rolecompatprefix}network
 %doc %{_pkgdocdir}/*/example-*-playbook.yml
 %doc %{_pkgdocdir}/network/example-inventory
 %doc %{_pkgdocdir}/*/README.md
-%doc %{_datadir}/ansible/roles/%{rolecompatprefix}kdump/README.md
-%doc %{_datadir}/ansible/roles/%{rolecompatprefix}postfix/README.md
-%doc %{_datadir}/ansible/roles/%{rolecompatprefix}selinux/README.md
-%doc %{_datadir}/ansible/roles/%{rolecompatprefix}timesync/README.md
-%doc %{_datadir}/ansible/roles/%{rolecompatprefix}network/README.md
+%doc %{_pkgdocdir}/*/README.html
+%doc %{_datadir}/ansible/roles/%{roleprefix}kdump/README.md
+%doc %{_datadir}/ansible/roles/%{roleprefix}postfix/README.md
+%doc %{_datadir}/ansible/roles/%{roleprefix}selinux/README.md
+%doc %{_datadir}/ansible/roles/%{roleprefix}timesync/README.md
+%doc %{_datadir}/ansible/roles/%{roleprefix}network/README.md
+%doc %{_datadir}/ansible/roles/%{roleprefix}kdump/README.html
+%doc %{_datadir}/ansible/roles/%{roleprefix}postfix/README.html
+%doc %{_datadir}/ansible/roles/%{roleprefix}selinux/README.html
+%doc %{_datadir}/ansible/roles/%{roleprefix}timesync/README.html
+%doc %{_datadir}/ansible/roles/%{roleprefix}network/README.html
 
 
 %license %{_pkgdocdir}/*/COPYING
 %license %{_pkgdocdir}/*/LICENSE
-%license %{_datadir}/ansible/roles/%{rolecompatprefix}kdump/COPYING
-%license %{_datadir}/ansible/roles/%{rolecompatprefix}postfix/COPYING
-%license %{_datadir}/ansible/roles/%{rolecompatprefix}selinux/COPYING
-%license %{_datadir}/ansible/roles/%{rolecompatprefix}timesync/COPYING
-%license %{_datadir}/ansible/roles/%{rolecompatprefix}network/LICENSE
+%license %{_datadir}/ansible/roles/%{roleprefix}kdump/COPYING
+%license %{_datadir}/ansible/roles/%{roleprefix}postfix/COPYING
+%license %{_datadir}/ansible/roles/%{roleprefix}selinux/COPYING
+%license %{_datadir}/ansible/roles/%{roleprefix}timesync/COPYING
+%license %{_datadir}/ansible/roles/%{roleprefix}network/LICENSE
 
 %changelog
-* Thu Aug 16 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-4
-- Add Obsoletes for the -techpreview subpackage
+* Tue Aug 14 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-4
+- Format the READMEs as html, by vdolezal, with changes to use highlight
+  (source-highlight does not understand YAML)
 
-* Thu Aug 16 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-3
-- Add warnings to role READMEs and other doc updates, rhbz#1616018
-- network: split the state setting into state and persistent_state, rhbz#1616014
-- Undo the -techpreview subpackage introduced in 1.0-1, rhbz#1616015
-
-* Thu Aug  2 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-2
+* Thu Aug  9 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-3
 - Rebase the network role to the last revision (d866422).
   Many improvements to tests, introduces autodetection of the current provider
   and defaults to using profile name as interface name.
-- Update the description.
-
-* Wed Aug  1 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-1
 - Rebase the selinux, timesync and kdump roles to their 1.0rc1 versions.
   Many changes to the role interfaces to make them more consistent
   and conforming to Ansible best practices.
-- Split the postfix role into a -techpreview subpackage, we do not consider
-  it stable yet.
+- Update the description.
+
+* Fri May 11 2018 Pavel Cahyna <pcahyna@redhat.com> - 0.6-4
+- Fix complaints about /usr/bin/python during RPM build by making the affected scripts non-exec
+- Fix merge botch
+
+* Mon Mar 19 2018 Troy Dawson <tdawson@redhat.com> - 0.6-3.1
+- Use -a (after cd) instead of -b (before cd) in %setup
 
 * Wed Mar 14 2018 Pavel Cahyna <pcahyna@redhat.com> - 0.6-3
 - Minor corrections of the previous change by Till Maas.
