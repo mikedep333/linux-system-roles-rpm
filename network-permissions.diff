@@ -1,0 +1,6 @@
+diff --git a/library/network_connections.py b/library/network_connections.py
+old mode 100755
+new mode 100644
+diff --git a/tests/test_network_connections.py b/tests/test_network_connections.py
+old mode 100755
+new mode 100644
