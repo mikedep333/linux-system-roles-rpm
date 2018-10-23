@@ -59,6 +59,7 @@ Patch3: rhel-system-roles-%{rolename3}-prefix.diff
 Patch5: rhel-system-roles-%{rolename5}-prefix.diff
 %endif
 
+# Not suitable for upstream, since the files need to be executable there
 Patch52: network-permissions.diff
 
 Url: https://github.com/linux-system-roles/
