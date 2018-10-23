@@ -5,7 +5,7 @@ Name: linux-system-roles
 %endif
 Summary: Set of interfaces for unified system management
 Version: 1.0
-Release: 5%{?dist}
+Release: 6%{?dist}
 
 #Group: Development/Libraries
 License: GPLv3+ and MIT and BSD
@@ -34,7 +34,7 @@ License: GPLv3+ and MIT and BSD
 %global rolename3 timesync
 %global version3 1.0.0-rc.1
 
-%global commit5 d866422d9d73ed823632a3c56ee8575cd56cad5b
+%global commit5 64b2d76de74df2d480394d02aae204beda4d9257
 %global shortcommit5 %(c=%{commit5}; echo ${c:0:7})
 %global rolename5 network
 #%%global version5 0.4
@@ -45,9 +45,11 @@ Source2: https://github.com/linux-system-roles/%{rolename2}/archive/%{commit2}.t
 Source3: https://github.com/linux-system-roles/%{rolename3}/archive/%{version3}.tar.gz#/%{rolename3}-%{version3}.tar.gz
 Source5: https://github.com/linux-system-roles/%{rolename5}/archive/%{commit5}.tar.gz#/%{rolename5}-%{shortcommit5}.tar.gz
 
+# 2018-10-23: Submitted upstream: https://github.com/linux-system-roles/timesync/pull/25
 Source6: timesync-playbook.yml
 Source7: timesync-pool-playbook.yml
 
+# 2018-10-23: Submitted upstream
 Source8: md2html.sh
 
 %if "%{roleprefix}" != "linux-system-roles."
@@ -57,6 +59,7 @@ Patch3: rhel-system-roles-%{rolename3}-prefix.diff
 Patch5: rhel-system-roles-%{rolename5}-prefix.diff
 %endif
 
+# Not suitable for upstream, since the files need to be executable there
 Patch52: network-permissions.diff
 
 Url: https://github.com/linux-system-roles/
@@ -224,6 +227,11 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 %license %{_datadir}/ansible/roles/%{roleprefix}network/LICENSE
 
 %changelog
+* Tue Oct 23 2018 Till Maas <opensource@till.name> - 1.0-6
+- Update Network system role to latest commit to include Fedora 29 fixes
+- Update example timesync example playbooks
+- Add comments about upstream status
+
 * Tue Aug 14 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-4
 - Format the READMEs as html, by vdolezal, with changes to use highlight
   (source-highlight does not understand YAML)
