@@ -46,8 +46,8 @@ Source3: https://github.com/linux-system-roles/%{rolename3}/archive/%{version3}.
 Source5: https://github.com/linux-system-roles/%{rolename5}/archive/%{commit5}.tar.gz#/%{rolename5}-%{shortcommit5}.tar.gz
 
 # 2018-10-23: Submitted upstream: https://github.com/linux-system-roles/timesync/pull/25
-Source6: timesync-playbook.yml
-Source7: timesync-pool-playbook.yml
+Source6: single-pool.yml
+Source7: multiple-ntp-servers.yml
 
 # 2018-10-23: Submitted upstream
 Source8: md2html.sh
@@ -131,8 +131,8 @@ mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}/kdump
 mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}/postfix
 mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}/selinux
 mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}/timesync
-install -p -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_pkgdocdir}/timesync/example-timesync-playbook.yml
-install -p -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_pkgdocdir}/timesync/example-timesync-pool-playbook.yml
+install -p -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_pkgdocdir}/timesync/example-single-pool.yml
+install -p -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_pkgdocdir}/timesync/example-multiple-ntp-servers.yml
 mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}/network
 
 cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}kdump/README.md \

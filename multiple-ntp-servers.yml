@@ -2,13 +2,13 @@
 - hosts: "{{ target }}"
   vars:
     timesync_ntp_servers:
-      - hostname: 0.rhel.pool.ntp.org
+      - hostname: 0.pool.ntp.org
         iburst: yes
-      - hostname: 1.rhel.pool.ntp.org
+      - hostname: 1.pool.ntp.org
         iburst: yes
-      - hostname: 2.rhel.pool.ntp.org
+      - hostname: 2.pool.ntp.org
         iburst: yes
-      - hostname: 3.rhel.pool.ntp.org
+      - hostname: 3.pool.ntp.org
         iburst: yes
   roles:
     - linux-system-roles.timesync
