@@ -14,34 +14,34 @@ License: GPLv3+ and MIT and BSD
 %endif
 %global roleprefix %{name}.
 
-%global commit0 fe8bb81966b60fa8979f3816a12b0c7120d71140
-%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
+#%%global commit0 fe8bb81966b60fa8979f3816a12b0c7120d71140
+#%%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global rolename0 kdump
-%global version0 1.0.0-rc.1
+%global version0 1.0.0
 
-%global commit1 43eec5668425d295dce3801216c19b1916df1f9b
-%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
+#%%global commit1 43eec5668425d295dce3801216c19b1916df1f9b
+#%%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global rolename1 postfix
 %global version1 0.1
 
-%global commit2 6dd057aa434a31cb6ee67d02967362f9131e0c50
-%global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
+#%%global commit2 6dd057aa434a31cb6ee67d02967362f9131e0c50
+#%%global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 %global rolename2 selinux
-#%%global version2 0.1
+%global version2 1.0.0
 
-%global commit3 33a1a8c349de10d6281ed83d4c791e9177d7a141
-%global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
+#%%global commit3 33a1a8c349de10d6281ed83d4c791e9177d7a141
+#%%global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 %global rolename3 timesync
-%global version3 1.0.0-rc.1
+%global version3 1.0.0
 
 %global commit5 64b2d76de74df2d480394d02aae204beda4d9257
 %global shortcommit5 %(c=%{commit5}; echo ${c:0:7})
 %global rolename5 network
-#%%global version5 0.4
+#%%global version5 1.0.0
 
 Source: https://github.com/linux-system-roles/%{rolename0}/archive/%{version0}.tar.gz#/%{rolename0}-%{version0}.tar.gz
 Source1: https://github.com/linux-system-roles/%{rolename1}/archive/%{version1}.tar.gz#/%{rolename1}-%{version1}.tar.gz
-Source2: https://github.com/linux-system-roles/%{rolename2}/archive/%{commit2}.tar.gz#/%{rolename2}-%{shortcommit2}.tar.gz
+Source2: https://github.com/linux-system-roles/%{rolename2}/archive/%{version2}.tar.gz#/%{rolename2}-%{version2}.tar.gz
 Source3: https://github.com/linux-system-roles/%{rolename3}/archive/%{version3}.tar.gz#/%{rolename3}-%{version3}.tar.gz
 Source5: https://github.com/linux-system-roles/%{rolename5}/archive/%{commit5}.tar.gz#/%{rolename5}-%{shortcommit5}.tar.gz
 
@@ -62,12 +62,16 @@ Patch5: rhel-system-roles-%{rolename5}-prefix.diff
 # Not suitable for upstream, since the files need to be executable there
 Patch52: network-permissions.diff
 
+Patch11: rhel-system-roles-postfix-pr5.diff
+
 Url: https://github.com/linux-system-roles/
 BuildArch: noarch
 
 BuildRequires: asciidoc
 BuildRequires: pandoc
 BuildRequires: highlight
+
+Obsoletes: rhel-system-roles-techpreview < 1.0-3
 
 %description
 Collection of Ansible roles and modules that provide a stable and
@@ -84,8 +88,9 @@ cd %{rolename1}-%{version1}
 %if "%{roleprefix}" != "linux-system-roles."
 %patch1 -p1
 %endif
+%patch11 -p1
 cd ..
-cd %{rolename2}-%{commit2}
+cd %{rolename2}-%{version2}
 %if "%{roleprefix}" != "linux-system-roles."
 %patch2 -p1
 %endif
@@ -106,7 +111,7 @@ cd ..
 sh %{SOURCE8} \
 %{rolename0}-%{version0}/README.md \
 %{rolename1}-%{version1}/README.md \
-%{rolename2}-%{commit2}/README.md \
+%{rolename2}-%{version2}/README.md \
 %{rolename3}-%{version3}/README.md \
 %{rolename5}-%{commit5}/README.md
 
@@ -115,7 +120,7 @@ mkdir -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles
 
 cp -pR %{rolename0}-%{version0}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename0}
 cp -pR %{rolename1}-%{version1}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename1}
-cp -pR %{rolename2}-%{commit2}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename2}
+cp -pR %{rolename2}-%{version2}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename2}
 cp -pR %{rolename3}-%{version3}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename3}
 cp -pR %{rolename5}-%{commit5}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename5}
 
