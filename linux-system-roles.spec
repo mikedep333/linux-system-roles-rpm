@@ -5,7 +5,7 @@ Name: linux-system-roles
 %endif
 Summary: Set of interfaces for unified system management
 Version: 1.0
-Release: 6%{?dist}
+Release: 7%{?dist}
 
 #Group: Development/Libraries
 License: GPLv3+ and MIT and BSD
@@ -232,6 +232,10 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 %license %{_datadir}/ansible/roles/%{roleprefix}network/LICENSE
 
 %changelog
+* Wed Oct 24 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-7
+- Update to latest versions of selinux, kdump and timesync.
+- Add Obsoletes for the -techpreview subpackage introduced mistakenly in 1.0-1
+
 * Tue Oct 23 2018 Till Maas <opensource@till.name> - 1.0-6
 - Update Network system role to latest commit to include Fedora 29 fixes
 - Update example timesync example playbooks
