@@ -14,36 +14,39 @@ License: GPLv3+ and MIT and BSD
 %endif
 %global roleprefix %{name}.
 
-#%%global commit0 fe8bb81966b60fa8979f3816a12b0c7120d71140
-#%%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
+%define defcommit() %{expand:%%global id%{1} %{2}
+%%global shortid%{1} %%(c=%%{id%{1}}; echo ${c:0:7})
+}
+
+%define deftag() %{expand:%%global id%{1} %{2}
+%%global shortid%{1} %{2}
+}
+
+#%%defcommit 0 fe8bb81966b60fa8979f3816a12b0c7120d71140
 %global rolename0 kdump
-%global version0 1.0.0
+%deftag 0 1.0.0
 
-%global commit1 611754bcc79783d026177c79a796c6d6343d1be5
-%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
+%defcommit 1 611754bcc79783d026177c79a796c6d6343d1be5
 %global rolename1 postfix
-#%%global version1 0.1
+#%%deftag 1 0.1
 
-#%%global commit2 6dd057aa434a31cb6ee67d02967362f9131e0c50
-#%%global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
+#%%defcommit 2 6dd057aa434a31cb6ee67d02967362f9131e0c50
 %global rolename2 selinux
-%global version2 1.0.0
+%deftag 2 1.0.0
 
-#%%global commit3 33a1a8c349de10d6281ed83d4c791e9177d7a141
-#%%global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
+#%%defcommit 3 33a1a8c349de10d6281ed83d4c791e9177d7a141
 %global rolename3 timesync
-%global version3 1.0.0
+%deftag 3 1.0.0
 
-%global commit5 64b2d76de74df2d480394d02aae204beda4d9257
-%global shortcommit5 %(c=%{commit5}; echo ${c:0:7})
+%defcommit 5 64b2d76de74df2d480394d02aae204beda4d9257
 %global rolename5 network
-#%%global version5 1.0.0
+#%%deftag 5 1.0.0
 
-Source: https://github.com/linux-system-roles/%{rolename0}/archive/%{version0}.tar.gz#/%{rolename0}-%{version0}.tar.gz
-Source1: https://github.com/linux-system-roles/%{rolename1}/archive/%{commit1}.tar.gz#/%{rolename1}-%{shortcommit1}.tar.gz
-Source2: https://github.com/linux-system-roles/%{rolename2}/archive/%{version2}.tar.gz#/%{rolename2}-%{version2}.tar.gz
-Source3: https://github.com/linux-system-roles/%{rolename3}/archive/%{version3}.tar.gz#/%{rolename3}-%{version3}.tar.gz
-Source5: https://github.com/linux-system-roles/%{rolename5}/archive/%{commit5}.tar.gz#/%{rolename5}-%{shortcommit5}.tar.gz
+Source: https://github.com/linux-system-roles/%{rolename0}/archive/%{id0}.tar.gz#/%{rolename0}-%{shortid0}.tar.gz
+Source1: https://github.com/linux-system-roles/%{rolename1}/archive/%{id1}.tar.gz#/%{rolename1}-%{shortid1}.tar.gz
+Source2: https://github.com/linux-system-roles/%{rolename2}/archive/%{id2}.tar.gz#/%{rolename2}-%{shortid2}.tar.gz
+Source3: https://github.com/linux-system-roles/%{rolename3}/archive/%{id3}.tar.gz#/%{rolename3}-%{shortid3}.tar.gz
+Source5: https://github.com/linux-system-roles/%{rolename5}/archive/%{id5}.tar.gz#/%{rolename5}-%{shortid5}.tar.gz
 
 # 2018-10-23: Submitted upstream: https://github.com/linux-system-roles/timesync/pull/25
 Source6: single-pool.yml
@@ -79,25 +82,25 @@ of Red Hat Enterprise Linux.
 
 %prep
 %setup -qc -a1 -a2 -a3 -a5
-cd %{rolename0}-%{version0}
+cd %{rolename0}-%{id0}
 #kdump patches here if necessary
 cd ..
-cd %{rolename1}-%{commit1}
+cd %{rolename1}-%{id1}
 %if "%{roleprefix}" != "linux-system-roles."
 %patch1 -p1
 %endif
 cd ..
-cd %{rolename2}-%{version2}
+cd %{rolename2}-%{id2}
 %if "%{roleprefix}" != "linux-system-roles."
 %patch2 -p1
 %endif
 cd ..
-cd %{rolename3}-%{version3}
+cd %{rolename3}-%{id3}
 %if "%{roleprefix}" != "linux-system-roles."
 %patch3 -p1
 %endif
 cd ..
-cd %{rolename5}-%{commit5}
+cd %{rolename5}-%{id5}
 %if "%{roleprefix}" != "linux-system-roles."
 %patch5 -p1
 %endif
@@ -106,20 +109,20 @@ cd ..
 
 %build
 sh %{SOURCE8} \
-%{rolename0}-%{version0}/README.md \
-%{rolename1}-%{commit1}/README.md \
-%{rolename2}-%{version2}/README.md \
-%{rolename3}-%{version3}/README.md \
-%{rolename5}-%{commit5}/README.md
+%{rolename0}-%{id0}/README.md \
+%{rolename1}-%{id1}/README.md \
+%{rolename2}-%{id2}/README.md \
+%{rolename3}-%{id3}/README.md \
+%{rolename5}-%{id5}/README.md
 
 %install
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles
 
-cp -pR %{rolename0}-%{version0}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename0}
-cp -pR %{rolename1}-%{commit1}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename1}
-cp -pR %{rolename2}-%{version2}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename2}
-cp -pR %{rolename3}-%{version3}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename3}
-cp -pR %{rolename5}-%{commit5}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename5}
+cp -pR %{rolename0}-%{id0}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename0}
+cp -pR %{rolename1}-%{id1}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename1}
+cp -pR %{rolename2}-%{id2}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename2}
+cp -pR %{rolename3}-%{id3}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename3}
+cp -pR %{rolename5}-%{id5}      $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}%{rolename5}
 
 %if 0%{?rolealtprefix:1}
 ln -s    %{roleprefix}%{rolename0}   $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{rolealtprefix}%{rolename0}
