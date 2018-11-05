@@ -14,6 +14,10 @@ License: GPLv3+ and MIT and BSD
 %endif
 %global roleprefix %{name}.
 
+# For each role, call either decommit() or deftag(). The other macros
+# (%id and %shortid) can be then used in the same way in both cases.
+# This way  the rest of the spec file des not need to know whether we are
+# dealing with a tag or a commit.
 %define defcommit() %{expand:%%global id%{1} %{2}
 %%global shortid%{1} %%(c=%%{id%{1}}; echo ${c:0:7})
 }
