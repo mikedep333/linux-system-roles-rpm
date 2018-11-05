@@ -52,7 +52,7 @@ Source2: https://github.com/linux-system-roles/%{rolename2}/archive/%{id2}.tar.g
 Source3: https://github.com/linux-system-roles/%{rolename3}/archive/%{id3}.tar.gz#/%{rolename3}-%{shortid3}.tar.gz
 Source5: https://github.com/linux-system-roles/%{rolename5}/archive/%{id5}.tar.gz#/%{rolename5}-%{shortid5}.tar.gz
 
-# 2018-10-23: Submitted upstream: https://github.com/linux-system-roles/timesync/pull/25
+# Merged upstream: https://github.com/linux-system-roles/timesync/pull/25
 Source6: single-pool.yml
 Source7: multiple-ntp-servers.yml
 
@@ -72,6 +72,7 @@ Patch52: network-permissions.diff
 Url: https://github.com/linux-system-roles/
 BuildArch: noarch
 
+# These are needed for md2html.sh to build the documentation
 BuildRequires: asciidoc
 BuildRequires: pandoc
 BuildRequires: highlight
