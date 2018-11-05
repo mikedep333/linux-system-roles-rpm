@@ -15,7 +15,7 @@ License: GPLv3+ and MIT and BSD
 %global roleprefix %{name}.
 
 # For each role, call either decommit() or deftag(). The other macros
-# (%id and %shortid) can be then used in the same way in both cases.
+# (%%id and %%shortid) can be then used in the same way in both cases.
 # This way  the rest of the spec file des not need to know whether we are
 # dealing with a tag or a commit.
 %define defcommit() %{expand:%%global id%{1} %{2}
@@ -240,6 +240,7 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 - Update to latest versions of selinux, kdump and timesync.
 - Update to the latest revision of postfix, fixes README markup
 - Add Obsoletes for the -techpreview subpackage introduced mistakenly in 1.0-1
+- spec file improvement: Unify the source macros with deftag() and defcommit()
 
 * Tue Oct 23 2018 Till Maas <opensource@till.name> - 1.0-6
 - Update Network system role to latest commit to include Fedora 29 fixes
