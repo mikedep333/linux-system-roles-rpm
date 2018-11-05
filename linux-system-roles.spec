@@ -183,10 +183,10 @@ mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/infini
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-infiniband-playbook.yml
 mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/macvlan.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-macvlan-playbook.yml
-cp $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/remove-profile.yml \
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/remove-profile.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-remove-profile-playbook.yml
 rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/remove-profile.yml
-cp $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/down-profile.yml \
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/down-profile.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-down-profile-playbook.yml
 rm $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/down-profile.yml
 mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/inventory \
@@ -243,6 +243,7 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 - Fix rpm build for added example timesync example playbooks
 - Misc spec file comments fixes
 - Fix rpmlint error by escaping a previous changelog entry with a macro
+- Comply with Fedora guidelines by always using "cp -p" in %%install
 
 * Wed Oct 24 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-7
 - Update to latest versions of selinux, kdump and timesync.
