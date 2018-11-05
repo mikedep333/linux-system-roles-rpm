@@ -265,7 +265,7 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 - Fix merge botch
 
 * Mon Mar 19 2018 Troy Dawson <tdawson@redhat.com> - 0.6-3.1
-- Use -a (after cd) instead of -b (before cd) in %setup
+- Use -a (after cd) instead of -b (before cd) in %%setup
 
 * Wed Mar 14 2018 Pavel Cahyna <pcahyna@redhat.com> - 0.6-3
 - Minor corrections of the previous change by Till Maas.
