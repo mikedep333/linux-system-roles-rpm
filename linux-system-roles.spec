@@ -214,6 +214,8 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 %{_datadir}/ansible/roles/%{roleprefix}network
 %doc %{_pkgdocdir}/*/example-*-playbook.yml
 %doc %{_pkgdocdir}/network/example-inventory
+%doc %{_pkgdocdir}/timesync/example-multiple-ntp-servers.yml
+%doc %{_pkgdocdir}/timesync/example-single-pool.yml
 %doc %{_pkgdocdir}/*/README.md
 %doc %{_pkgdocdir}/*/README.html
 %doc %{_datadir}/ansible/roles/%{roleprefix}kdump/README.md
@@ -237,6 +239,11 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 %license %{_datadir}/ansible/roles/%{roleprefix}network/LICENSE
 
 %changelog
+* Mon Nov 05 2018 Mike DePaulo <mikedep333@gmail.com> - 1.0-7
+- Fix rpm build for added example timesync example playbooks
+- Misc spec file comments fixes
+- Fix rpmlint error by escaping a previous changelog entry with a macro
+
 * Wed Oct 24 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-7
 - Update to latest versions of selinux, kdump and timesync.
 - Update to the latest revision of postfix, fixes README markup
