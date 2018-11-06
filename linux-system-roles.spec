@@ -56,7 +56,11 @@ Source5: https://github.com/linux-system-roles/%{rolename5}/archive/%{id5}.tar.g
 Source6: single-pool.yml
 Source7: multiple-ntp-servers.yml
 
-# 2018-10-23: Submitted upstream
+# Simple script to format the READMEs as html with changes to use highlight
+# (source-highlight does not understand YAML)
+#
+# Only needed for RPM packages because upstream users will just use markdown,
+# which is the standard for Ansible docs.
 Source8: md2html.sh
 
 %if "%{roleprefix}" != "linux-system-roles."
