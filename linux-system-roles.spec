@@ -83,11 +83,19 @@ BuildRequires: highlight
 
 Obsoletes: rhel-system-roles-techpreview < 1.0-3
 
+# We need to put %%description within the if block to avoid empty
+# lines showing up.
+%if 0%{?rhel}
 %description
 Collection of Ansible roles and modules that provide a stable and
 consistent configuration interface for managing multiple versions
 of Red Hat Enterprise Linux.
-
+%else
+%description
+Collection of Ansible roles and modules that provide a stable and
+consistent configuration interface for managing multiple versions
+of Fedora, Red Hat Enterprise Linux & CentOS.
+%endif
 
 %prep
 %setup -qc -a1 -a2 -a3 -a5
@@ -243,11 +251,12 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 %license %{_datadir}/ansible/roles/%{roleprefix}network/LICENSE
 
 %changelog
-* Mon Nov 05 2018 Mike DePaulo <mikedep333@gmail.com> - 1.0-7
+* Tue Nov 06 2018 Mike DePaulo <mikedep333@gmail.com> - 1.0-7
 - Fix rpm build for added example timesync example playbooks
 - Misc spec file comments fixes
 - Fix rpmlint error by escaping a previous changelog entry with a macro
 - Comply with Fedora guidelines by always using "cp -p" in %%install
+- Update %%description to be different for Fedora.
 
 * Wed Oct 24 2018 Pavel Cahyna <pcahyna@redhat.com> - 1.0-7
 - Update to latest versions of selinux, kdump and timesync.
