@@ -224,12 +224,12 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 %{_datadir}/ansible/roles/%{roleprefix}selinux
 %{_datadir}/ansible/roles/%{roleprefix}timesync
 %{_datadir}/ansible/roles/%{roleprefix}network
-%doc %{_pkgdocdir}/*/example-*-playbook.yml
-%doc %{_pkgdocdir}/network/example-inventory
-%doc %{_pkgdocdir}/timesync/example-multiple-ntp-servers.yml
-%doc %{_pkgdocdir}/timesync/example-single-pool.yml
-%doc %{_pkgdocdir}/*/README.md
-%doc %{_pkgdocdir}/*/README.html
+%{_pkgdocdir}/*/example-*-playbook.yml
+%{_pkgdocdir}/network/example-inventory
+%{_pkgdocdir}/timesync/example-multiple-ntp-servers.yml
+%{_pkgdocdir}/timesync/example-single-pool.yml
+%{_pkgdocdir}/*/README.md
+%{_pkgdocdir}/*/README.html
 %doc %{_datadir}/ansible/roles/%{roleprefix}kdump/README.md
 %doc %{_datadir}/ansible/roles/%{roleprefix}postfix/README.md
 %doc %{_datadir}/ansible/roles/%{roleprefix}selinux/README.md
@@ -251,6 +251,9 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 %license %{_datadir}/ansible/roles/%{roleprefix}network/LICENSE
 
 %changelog
+* Wed Nov 14 2018 Mike DePaulo <mikedep333@gmail.com> - 1.0-7
+- spec file improvement: Remove unnecessary %%doc for files under _pkgdocdor
+
 * Tue Nov 06 2018 Mike DePaulo <mikedep333@gmail.com> - 1.0-7
 - Fix rpm build for added example timesync example playbooks
 - Misc spec file comments fixes
