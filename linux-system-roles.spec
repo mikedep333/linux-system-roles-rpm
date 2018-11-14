@@ -13,6 +13,7 @@ License: GPLv3+ and MIT and BSD
 %global rolealtprefix linux-system-roles.
 %endif
 %global roleprefix %{name}.
+%global _pkglicensedir %{_licensedir}/%{name}
 
 # For each role, call either decommit() or deftag(). The other macros
 # (%%id and %%shortid) can be then used in the same way in both cases.
@@ -156,33 +157,39 @@ mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}/timesync
 install -p -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_pkgdocdir}/timesync/example-single-pool.yml
 install -p -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_pkgdocdir}/timesync/example-multiple-ntp-servers.yml
 mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}/network
+mkdir -p $RPM_BUILD_ROOT%{_pkglicensedir}
 
 cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}kdump/README.md \
     $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}kdump/README.html \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}kdump/COPYING \
     $RPM_BUILD_ROOT%{_pkgdocdir}/kdump
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}kdump/COPYING \
+    $RPM_BUILD_ROOT%{_pkglicensedir}/kdump.COPYING
 
 cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}postfix/README.md \
     $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}postfix/README.html \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}postfix/COPYING \
     $RPM_BUILD_ROOT%{_pkgdocdir}/postfix
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}postfix/COPYING \
+    $RPM_BUILD_ROOT%{_pkglicensedir}/postfix.COPYING
 
 cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}selinux/README.md \
     $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}selinux/README.html \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}selinux/COPYING \
     $RPM_BUILD_ROOT%{_pkgdocdir}/selinux
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}selinux/COPYING \
+    $RPM_BUILD_ROOT%{_pkglicensedir}/selinux.COPYING
 mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}selinux/selinux-playbook.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/selinux/example-selinux-playbook.yml
 
 cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}timesync/README.md \
     $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}timesync/README.html \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}timesync/COPYING \
     $RPM_BUILD_ROOT%{_pkgdocdir}/timesync
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}timesync/COPYING \
+    $RPM_BUILD_ROOT%{_pkglicensedir}/timesync.COPYING
 
 cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/README.md \
     $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/README.html \
-    $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/LICENSE \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network
+cp -p $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/LICENSE \
+    $RPM_BUILD_ROOT%{_pkglicensedir}/network.LICENSE
 mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/bond-with-vlan.yml \
     $RPM_BUILD_ROOT%{_pkgdocdir}/network/example-bond-with-vlan-playbook.yml
 mv $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples/bridge-with-vlan.yml \
@@ -241,9 +248,7 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 %doc %{_datadir}/ansible/roles/%{roleprefix}timesync/README.html
 %doc %{_datadir}/ansible/roles/%{roleprefix}network/README.html
 
-
-%license %{_pkgdocdir}/*/COPYING
-%license %{_pkgdocdir}/*/LICENSE
+%license %{_pkglicensedir}/*
 %license %{_datadir}/ansible/roles/%{roleprefix}kdump/COPYING
 %license %{_datadir}/ansible/roles/%{roleprefix}postfix/COPYING
 %license %{_datadir}/ansible/roles/%{roleprefix}selinux/COPYING
@@ -253,6 +258,7 @@ rmdir $RPM_BUILD_ROOT%{_datadir}/ansible/roles/%{roleprefix}network/examples
 %changelog
 * Wed Nov 14 2018 Mike DePaulo <mikedep333@gmail.com> - 1.0-7
 - spec file improvement: Remove unnecessary %%doc for files under _pkgdocdor
+- Install license files under /usr/share/licenses instead of /usr/share/doc
 
 * Tue Nov 06 2018 Mike DePaulo <mikedep333@gmail.com> - 1.0-7
 - Fix rpm build for added example timesync example playbooks
